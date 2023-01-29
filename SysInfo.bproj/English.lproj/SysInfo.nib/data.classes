@@ -1,0 +1,26 @@
+PieChart = {ACTIONS = {}; OUTLETS = {fontId = fontId; }; SUPERCLASS = View; };
+NSBModule = {
+    ACTIONS = {}; 
+    OUTLETS = {
+	viewBenchmark = viewBenchmark; 
+	viewButtonBar = viewButtonBar; 
+	viewInfo = viewInfo; 
+    }; 
+    SUPERCLASS = Object; 
+};
+SysInfo = {
+    ACTIONS = {"refreshInfo:" = "refreshInfo:"; }; 
+    OUTLETS = {
+	diskUsageBar = diskUsageBar; 
+	hostBrowser = hostBrowser; 
+	hostCPU = hostCPU; 
+	hostOS = hostOS; 
+	hostRAM = hostRAM; 
+	hostText = hostText; 
+	memBrowser = memBrowser; 
+	memPieChart = memPieChart; 
+    }; 
+    SUPERCLASS = NSBModule; 
+};
+FirstResponder = {ACTIONS = {}; SUPERCLASS = Object; };
+PercentBar = {ACTIONS = {}; OUTLETS = {}; SUPERCLASS = View; };

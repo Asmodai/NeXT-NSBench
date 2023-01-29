@@ -1,0 +1,22 @@
+NSBModule = {
+    ACTIONS = {}; 
+    OUTLETS = {
+	viewBenchmark = viewBenchmark; 
+	viewButtonBar = viewButtonBar; 
+	viewInfo = viewInfo; 
+    }; 
+    SUPERCLASS = Object; 
+};
+NXBenchView = {ACTIONS = {}; OUTLETS = {resMatrix = resMatrix; }; SUPERCLASS = View; };
+FirstResponder = {ACTIONS = {}; SUPERCLASS = Object; };
+NXFactor = {
+    ACTIONS = {"clear:" = "clear:"; "run:" = "run:"; }; 
+    OUTLETS = {
+	btnFactor = btnFactor; 
+	fldFactor = fldFactor; 
+	mtxFactor = mtxFactor; 
+	vvwFactor = vvwFactor; 
+	wndFactor = wndFactor; 
+    }; 
+    SUPERCLASS = NSBModule; 
+};

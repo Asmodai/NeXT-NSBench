@@ -1,0 +1,30 @@
+INSTALLDIR = "$(HOME)/Apps";
+APPICON = NSBench.tiff;
+GENERATEMAIN = YES;
+DOCICONFILES = ();
+FILESTABLE = {
+    M_FILES = (NSBench_main.m);
+    OTHER_LINKED = (slice.pswraps);
+    H_FILES = (BundleManager.h, Controller.h, Disk.h, Mach.h, Malloc.h, Manager.h, MatrixManager.h, NetInfo.h, NSBModule.h, "Object+Debug.h", PercentBar.h, PieChart.h, String.h, UserButtonCell.h, Utils.h);
+    CLASSES = (BundleManager.m, Controller.m, Disk.m, Mach.m, Malloc.m, Manager.m, MatrixManager.m, NetInfo.m, NSBModule.m, "Object+Debug.m", PercentBar.m, PieChart.m, String.m, UserButtonCell.m, Utils.m);
+    IMAGES = (CoreMark.tiff, cubefire.tiff, "Disk-CD-CDFS.tiff", "Disk-CD-DOS.tiff", "Disk-CD-Mac.tiff", "Disk-FD-DOS.tiff", "Disk-FD-Mac.tiff", "Disk-FD-Unix.tiff", "Disk-HD-DOS.tiff", "Disk-HD-Mac.tiff", "Disk-HD-Unix.tiff", "Disk-OD-DOS.tiff", "Disk-OD-Mac.tiff", "Disk-OD-Unix.tiff", DiskIO.tiff, Graphics.tiff, Network.tiff, NSBench.tiff, SysInfo.tiff);
+    PSW_FILES = ();
+    C_FILES = ();
+    OTHER_RESOURCES = ();
+    OTHER_SOURCES = (Makefile.preamble, Makefile, Makefile.postamble);
+    SUBPROJECTS = ();
+    BUNDLES = (SysInfo.bproj, NXFactor.bproj);
+    OTHER_LIBS = (Media_s, NeXT_s);
+    INTERFACES = (NSBench.nib);
+};
+APPCLASS = Application;
+MAINNIB = NSBench;
+DOCEXTENSIONS = ();
+PROJECTTYPE = Application;
+PROJECTVERSION = 1.1;
+LOCALIZABLE_FILES = {
+    NSBench.nib;
+};
+PROJECTNAME = NSBench;
+SYSTEMEXTENSIONS = ();
+LANGUAGE = English;

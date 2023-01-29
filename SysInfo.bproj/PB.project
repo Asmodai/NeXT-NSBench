@@ -1,0 +1,21 @@
+BUNDLE_EXTENSION = bundle;
+FILESTABLE = {
+    CLASSES = (BundlePrimary.m, HostInfo.m, MemInfo.m);
+    OTHER_RESOURCES = ();
+    OTHER_SOURCES = (Makefile.preamble, Makefile, Makefile.postamble);
+    H_FILES = (BundlePrimary.h, HostInfo.h, MemInfo.h);
+    INTERFACES = (SysInfo.nib);
+    IMAGES = (NSBModule.tiff);
+    OTHER_LINKED = ();
+    STRINGS_FILES = (NSBModule.strings);
+};
+LOCALIZABLE_FILES = {
+    NSBModule.strings;
+    SysInfo.nib;
+};
+PROJECTVERSION = 1.1;
+PROJECTTYPE = Bundle;
+PROJECTNAME = SysInfo;
+GENERATEMAIN = YES;
+LANGUAGE = English;
+DOCICONFILES = ();

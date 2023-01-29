@@ -1,0 +1,20 @@
+LANGUAGE = English;
+FILESTABLE = {
+    CLASSES = (BundlePrimary.m, NXBenchView.m);
+    OTHER_RESOURCES = ();
+    OTHER_SOURCES = (Makefile.preamble, Makefile, Makefile.postamble);
+    INTERFACES = (NXFactor.nib);
+    H_FILES = (BundlePrimary.h, NXBenchView.h);
+    IMAGES = (NSBModule.tiff);
+    STRINGS_FILES = (NSBModule.strings);
+};
+LOCALIZABLE_FILES = {
+    NSBModule.strings;
+    NXFactor.nib;
+};
+PROJECTVERSION = 1.1;
+PROJECTTYPE = Bundle;
+PROJECTNAME = NXFactor;
+GENERATEMAIN = YES;
+DOCICONFILES = ();
+BUNDLE_EXTENSION = bundle;

@@ -1,0 +1,34 @@
+defineps drawSlice (float grayshade; float radius; float startangle; float  endangle; float labelps; char *thelabel)
+  1 setlinewidth
+  newpath 0 0 moveto
+    0 0 radius startangle endangle arc
+  closepath
+  1.415 setmiterlimit
+  1 setlinewidth
+
+  gsave
+    grayshade setgray
+    fill
+  grestore
+  stroke
+
+  gsave
+    startangle endangle add 2 div rotate
+
+    radius 0 translate
+    newpath
+      0 0 moveto labelps .8 mul 0 lineto stroke
+    labelps 0 translate
+    0 0 transform
+  grestore
+  itransform
+  /y exch def /x exch def
+  x y moveto
+
+  x 0 lt
+  { (thelabel) stringwidth pop neg 0 rmoveto }
+  if
+  y 0 lt { 0 labelps neg rmoveto } if
+  (thelabel) show
+endps
+

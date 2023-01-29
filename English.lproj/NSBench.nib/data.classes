@@ -1,0 +1,16 @@
+FirstResponder = {ACTIONS = {}; SUPERCLASS = Object; };
+Manager = {
+    ACTIONS = {"appDidInit:" = "appDidInit:"; "showInfo:" = "showInfo:"; }; 
+    OUTLETS = {
+	btnsBenchmark = btnsBenchmark; 
+	btnsInfo = btnsInfo; 
+	viewBenchmark = viewBenchmark; 
+	viewButtonBar = viewButtonBar; 
+	viewCurrentBenchmark = viewCurrentBenchmark; 
+	viewCurrentInfo = viewCurrentInfo; 
+	viewInfo = viewInfo; 
+	wndBenchmark = wndBenchmark; 
+	wndInfo = wndInfo; 
+    }; 
+    SUPERCLASS = Object; 
+};
