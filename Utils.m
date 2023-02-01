@@ -78,7 +78,7 @@ int
 vsnprintf(char *buf, size_t size, const char *fmt, va_list args)
 {
   NXStream *stream = NULL;
-  int length = 0;
+  int       length = 0;
 
   stream = NXOpenMemory(NULL, 0, NX_READWRITE);
   NXVPrintf(stream, fmt, args);

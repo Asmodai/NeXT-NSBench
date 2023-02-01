@@ -42,9 +42,18 @@
   return self;
 }
 
+- showLog:sender
+{
+  [wndLog makeKeyAndOrderFront:self];
+
+  return self;
+}
+
 - clear:sender
 {
   [vvwFactor clear];
+
+  return self;
 }
 
 - run:sender
@@ -58,6 +67,7 @@
                   NULL,
                   NULL);
 
+  [vvwFactor setLogText:txtLog];
   [vvwFactor runBenchmark];
   
   [fldFactor setFloatValue:[vvwFactor meanResult]];

@@ -55,6 +55,8 @@
   id btnsInfo;
   id btnsBenchmark;
 
+  id txtVersion;
+
   List          *_lstBundles;
   MatrixManager *_mgrInfo;
   MatrixManager *_mgrBenchmark;

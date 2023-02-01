@@ -3,7 +3,7 @@
  *
  * Copyright (c) 2023 Paul Ward <asmodai@gmail.com>
  *
- * Time-stamp: <23/01/28 20:17:56 asmodai>
+ * Time-stamp: <23/01/29 22:04:37 asmodai>
  *
  * Author:     Paul Ward <asmodai@gmail.com>
  * Maintainer: Paul Ward <asmodai@gmail.com>
@@ -231,11 +231,10 @@ get_dns_config(NetInfo *ni, String *domain, String *search, List *servers)
         }
       }
     }
-
-    [vlst freeObjects];
-    [vlst free];
   }
 
+  [result freeObjects];
+  [result free];
 
   return YES;
 }

@@ -7,16 +7,18 @@ NSBModule = {
     }; 
     SUPERCLASS = Object; 
 };
-NXBenchView = {ACTIONS = {}; OUTLETS = {resMatrix = resMatrix; }; SUPERCLASS = View; };
 FirstResponder = {ACTIONS = {}; SUPERCLASS = Object; };
+NXBenchView = {ACTIONS = {}; OUTLETS = {resMatrix = resMatrix; }; SUPERCLASS = View; };
 NXFactor = {
-    ACTIONS = {"clear:" = "clear:"; "run:" = "run:"; }; 
+    ACTIONS = {"clear:" = "clear:"; "run:" = "run:"; "showLog:" = "showLog:"; }; 
     OUTLETS = {
 	btnFactor = btnFactor; 
 	fldFactor = fldFactor; 
 	mtxFactor = mtxFactor; 
+	txtLog = txtLog; 
 	vvwFactor = vvwFactor; 
 	wndFactor = wndFactor; 
+	wndLog = wndLog; 
     }; 
     SUPERCLASS = NSBModule; 
 };

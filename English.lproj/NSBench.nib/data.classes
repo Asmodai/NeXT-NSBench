@@ -4,6 +4,7 @@ Manager = {
     OUTLETS = {
 	btnsBenchmark = btnsBenchmark; 
 	btnsInfo = btnsInfo; 
+	txtVersion = txtVersion; 
 	viewBenchmark = viewBenchmark; 
 	viewButtonBar = viewButtonBar; 
 	viewCurrentBenchmark = viewCurrentBenchmark; 

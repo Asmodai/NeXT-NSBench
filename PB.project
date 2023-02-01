@@ -1,7 +1,3 @@
-INSTALLDIR = "$(HOME)/Apps";
-APPICON = NSBench.tiff;
-GENERATEMAIN = YES;
-DOCICONFILES = ();
 FILESTABLE = {
     M_FILES = (NSBench_main.m);
     OTHER_LINKED = (slice.pswraps);
@@ -17,8 +13,14 @@ FILESTABLE = {
     OTHER_LIBS = (Media_s, NeXT_s);
     INTERFACES = (NSBench.nib);
 };
+INSTALLDIR = "$(HOME)/Apps";
+COMPILEROPTIONS = "";
+APPICON = NSBench.tiff;
+GENERATEMAIN = YES;
+DOCICONFILES = ();
 APPCLASS = Application;
 MAINNIB = NSBench;
+LINKEROPTIONS = "";
 DOCEXTENSIONS = ();
 PROJECTTYPE = Application;
 PROJECTVERSION = 1.1;

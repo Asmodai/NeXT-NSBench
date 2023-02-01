@@ -38,11 +38,15 @@
 #import "UserButtonCell.h"
 #import "NSBModule.h"
 #import "Utils.h"
+#import "String.h"
 
 #import <objc/List.h>
 #import <appkit/appkit.h>
 #import <sys/dir.h>
 #import <sys/dirent.h>
+
+/* This will go elsewhere at some point. */
+#define VERSION "0.2"
 
 static
 BOOL
@@ -61,6 +65,10 @@ fileNameHasExtension(const char *f, const char *e)
 
 - appDidInit:sender
 {
+  String *version;
+
+  version = [[String alloc] initFromFormat:"Version %s", VERSION];
+
   _lstBundles   = [[List allocFromZone:[self zone]] init];
   _mgrInfo      = [[MatrixManager alloc] init];
   _mgrBenchmark = [[MatrixManager alloc] init];
@@ -70,6 +78,8 @@ fileNameHasExtension(const char *f, const char *e)
   
   [_mgrInfo      setView:viewInfo];
   [_mgrBenchmark setView:viewBenchmark];
+
+  [txtVersion setStringValue: [version stringValue]];
 
   [self createBundlesAndLoadModules:YES];
   [self createBundleLists];

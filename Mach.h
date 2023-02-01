@@ -56,12 +56,9 @@
 - (id)init;
 
 - (int)host_id;
-- (double)get_disk_usage:(char *)path;
-- (int)statfs:(char *)path
-     toStruct:(struct statfs *)buf;
 - (void)kernel_version:(kernel_version_t *)data;
-- (void)cpu_type:(char *)data
-         subtype:(char *)data;
+- (void)cpu_type:(char **)data
+         subtype:(char **)data;
 - (void)vm_statistics:(vm_statistics_data_t *)data;
 - (void)machine_info:(machine_info_data_t *)data;
 

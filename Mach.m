@@ -44,6 +44,9 @@
 #import <mach/mach_host.h>
 #import <mach/mach_error.h>
 
+#import "Malloc.h"
+#import "Utils.h"
+
 static Mach *sharedMach = nil;
 
 @implementation Mach
@@ -75,46 +78,6 @@ static Mach *sharedMach = nil;
   return gethostid();
 }
 
-/* Nor is this, but, meh. */
-- (double)get_disk_usage:(char *)path
-{
-  struct statfs   fs;
-  register double total    = 0;
-  register double usage    = 0;
-  register double reserved = 0;
-
-  if (statfs(path, &fs) < 0) {
-    perror("statfs()");
-    return -1.0;
-  }
-
-  if (fs.f_blocks == 0) {
-    fprintf(stderr, "NSBench: No blocks on `%s', how?\n", path);
-    return -1.0;
-  }
-
-  total    = fs.f_blocks;
-  usage    = total - fs.f_bfree;
-  reserved = fs.f_bfree  - fs.f_bavail;
-
-  total -= reserved;
-
-  return usage / total * 100.0;
-}
-
-- (int)statfs:(char *)path
-     toStruct:(struct statfs *)buf
-{
-  int ret = 0;
-
-  if ((ret = statfs(path, buf)) < 0) {
-    perror("statfs()");
-    return 0;
-  }
-
-  return ret;
-}
-
 - (void)kernel_version:(kernel_version_t *)data
 {
   kern_return_t kret = 0;
@@ -126,8 +89,8 @@ static Mach *sharedMach = nil;
   }
 }
 
-- (void)cpu_type:(char *)cpuType
-         subtype:(char *)cpuSubtype
+- (void)cpu_type:(char **)cpuType
+         subtype:(char **)cpuSubtype
 {
   struct host_basic_info kbi   = { 0 };
   kern_return_t          kret  = 0;
@@ -139,10 +102,85 @@ static Mach *sharedMach = nil;
     exit(EXIT_FAILURE);
   }
 
-  slot_name(kbi.cpu_type,
-            kbi.cpu_subtype,
-            (char **)cpuType,
-            (char **)cpuSubtype);
+  /*
+   * Rather than using `slot_name', we do things manually so we can
+   * have tighter control over what gets returned.
+   */
+  switch (kbi.cpu_type) {
+    /*
+     * Motorola 68k
+     */
+    case CPU_TYPE_MC680x0:
+      asprintf(cpuType, "Motorola 680x0");
+      switch (kbi.cpu_subtype) {
+        case CPU_SUBTYPE_MC68030:
+          asprintf(cpuSubtype, "Motorola 68030");
+          break;
+        case CPU_SUBTYPE_MC68040:
+          asprintf(cpuSubtype, "Motorola 68040");
+          break;
+        default:
+          asprintf(cpuSubtype, "Motorola 680x0");
+      }
+      break;
+
+      /*
+       * Intel IA-32.
+       */
+    case CPU_TYPE_I386:
+      asprintf(cpuType, "Intel IA-32");
+      switch (kbi.cpu_subtype) {
+        case CPU_SUBTYPE_386:
+          asprintf(cpuSubtype, "Intel i386");
+          break;
+        case CPU_SUBTYPE_486:
+          asprintf(cpuSubtype, "Intel i486");
+          break;
+        case CPU_SUBTYPE_486SX:
+          asprintf(cpuSubtype, "Intel i486SX");
+          break;
+        case CPU_SUBTYPE_586:
+          asprintf(cpuSubtype, "Intel i586");
+          break;
+        case CPU_SUBTYPE_586SX:
+          asprintf(cpuSubtype, "Intel i586SX");
+          break;
+        default:
+          asprintf(cpuSubtype, "Intel i386");
+      }
+      break;
+
+      /*
+       * HP PA-RISC.
+       */
+    case CPU_TYPE_HPPA:
+      asprintf(cpuType, "PA-RISC");
+      switch (kbi.cpu_subtype) {
+        case CPU_SUBTYPE_HPPA_7100:
+          asprintf(cpuSubtype, "HP PA-RISC 7100");
+          break;
+        case CPU_SUBTYPE_HPPA_7100LC:
+          asprintf(cpuSubtype, "HP PA-RISC 7100LC");
+          break;
+        default:
+          asprintf(cpuSubtype, "HP PA-RISC");
+      }
+      break;
+      
+      /*
+       * Sun SPARC.
+       */
+    case CPU_TYPE_SPARC:
+      // SPARC's CPU type will probably be `generic' on a SPARCstation.
+      // The name `Sun SPARC' is also misleading :)
+      asprintf(cpuType,    "Sun SPARC");
+      asprintf(cpuSubtype, "Sun SPARC");
+      break;
+
+    default:
+      asprintf(cpuType,    "Unknown");
+      asprintf(cpuSubtype, "Unknown");
+  }
 }
 
 - (void)vm_statistics:(vm_statistics_data_t *)data

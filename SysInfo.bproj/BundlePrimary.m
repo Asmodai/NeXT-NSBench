@@ -3,8 +3,8 @@
  *
  * Copyright (c) 2023 Paul Ward <asmodai@gmail.com>
  *
- * Time-stamp: <23/01/29 13:03:08 asmodai>
- * Revision:   362
+ * Time-stamp: <23/02/01 09:33:39 asmodai>
+ * Revision:   365
  *
  * Author:     Paul Ward <asmodai@gmail.com>
  * Maintainer: Paul Ward <asmodai@gmail.com>
@@ -281,10 +281,12 @@ is_colour(int depth)
     char *cpuType    = NULL;
     char *cpuSubtype = NULL;
 
-    [mach cpu_type:(char *)&cpuType
-           subtype:(char *)&cpuSubtype];
-
+    [mach cpu_type:&cpuType
+           subtype:&cpuSubtype];
     asprintf(&cpu, "%s", cpuSubtype);
+
+    MAYBE_FREE(cpuType);
+    MAYBE_FREE(cpuSubtype);
   }
 
   [(TextField *)hostCPU setStringValue:cpu];

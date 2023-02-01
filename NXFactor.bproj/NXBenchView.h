@@ -4,7 +4,7 @@
  * Copyright (c) 2023 Paul Ward <asmodai@gmail.com>
  * Copyright (c) 2001-2002 by Philippe C.D. Robert
  *
- * Time-stamp: <23/01/29 18:29:50 asmodai>
+ * Time-stamp: <23/01/30 17:36:05 asmodai>
  *
  * Author:     Paul Ward <asmodai@gmail.com>
  * Maintainer: Paul Ward <asmodai@gmail.com>
@@ -47,11 +47,13 @@
   float resCurve;
   float resFill;
   float resTrans;
+  float resPath;
   float resText;
   float resComposite;
   float resWindowTest;
 
   id resMatrix;
+  id txtLog;
 }
 
 - (id)initFrame:(const NXRect *)frame;
@@ -60,12 +62,18 @@
 - (float)meanResult;
 - (int)currentTimeInMs;
 
+- (id)setLogText:(id)anObject;
+- (void)log:(const char *)fmt, ...;
+- (void)clearLog;
+
+- (void)clear;
 - (void)line;
 - (void)curve;
 - (void)fill;
 - (void)trans;
-- (void)text;
 - (void)composite;
+- (void)userPath;
+- (void)text;
 - (void)windowTest;
 
 @end

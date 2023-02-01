@@ -44,10 +44,14 @@
   id mtxFactor;
   id fldFactor;
   id vvwFactor;
+
+  id wndLog;
+  id txtLog;
 }
 
 - didLoadNib;
 
+- showLog:sender;
 - clear:sender;
 - run:sender;
 
