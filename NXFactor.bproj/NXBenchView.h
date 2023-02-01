@@ -4,7 +4,7 @@
  * Copyright (c) 2023 Paul Ward <asmodai@gmail.com>
  * Copyright (c) 2001-2002 by Philippe C.D. Robert
  *
- * Time-stamp: <23/01/30 17:36:05 asmodai>
+ * Time-stamp: <23/02/01 18:49:36 asmodai>
  *
  * Author:     Paul Ward <asmodai@gmail.com>
  * Maintainer: Paul Ward <asmodai@gmail.com>
@@ -50,10 +50,13 @@
   float resPath;
   float resText;
   float resComposite;
-  float resWindowTest;
+  float resWindowMove;
+  float resWindowResize;
 
-  id resMatrix;
+  id txtFactor;
+  id txtStatus;
   id txtLog;
+  id wndTest;
 }
 
 - (id)initFrame:(const NXRect *)frame;
@@ -62,9 +65,13 @@
 - (float)meanResult;
 - (int)currentTimeInMs;
 
+- (id)setTestWindow:(id)anObject;
 - (id)setLogText:(id)anObject;
+
 - (void)log:(const char *)fmt, ...;
 - (void)clearLog;
+- (void)status:(const char *)msg;
+- (void)clearStatus;
 
 - (void)clear;
 - (void)line;
@@ -74,7 +81,8 @@
 - (void)composite;
 - (void)userPath;
 - (void)text;
-- (void)windowTest;
+- (void)windowMove;
+- (void)windowResize;
 
 @end
 

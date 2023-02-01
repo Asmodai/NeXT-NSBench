@@ -1,10 +1,10 @@
 /* -*- ObjC -*-
- * SysInfo.m  --- Some title
+ * SysInfo.m  --- Sytem Information main object.
  *
  * Copyright (c) 2023 Paul Ward <asmodai@gmail.com>
  *
- * Time-stamp: <23/02/01 09:33:39 asmodai>
- * Revision:   365
+ * Time-stamp: <23/02/01 20:01:22 asmodai>
+ * Revision:   376
  *
  * Author:     Paul Ward <asmodai@gmail.com>
  * Maintainer: Paul Ward <asmodai@gmail.com>
@@ -45,6 +45,7 @@
 #import "../Utils.h"
 #import "../Malloc.h"
 #import "../String.h"
+#import "../Platform.h"
 #import "MemInfo.h"
 #import "HostInfo.h"
 
@@ -67,7 +68,6 @@ static const char *activeLabel   = "Active";
 static const char *freeLabel     = "Free";
 
 static MemInfo *mi    = nil;
-static char    *build = NULL;   
 
 static char *sections[] = {
   "Host",
@@ -148,8 +148,6 @@ is_colour(int depth)
 
 - (void)poll
 {
-  float rootUsage = 0.0;
-
   [mi poll];
   
   [memPieChart setWedgeAt:0
@@ -183,94 +181,7 @@ is_colour(int depth)
 
 - (void)getOS
 {
-  static char      *uname = NULL;
-  char             *buf   = NULL;
-  kernel_version_t  ver   = "";
-  size_t            idx   = 0;
-  size_t            len   = 0;
-
-  [mach kernel_version:&ver];
-  len = strlen(ver);
-
-  if (build == NULL) {
-    asprintf(&build, "%s", ver);
-    if (build[strlen(build) - 1] == '\n') {
-      build[strlen(build) - 1] = '\0';
-    }
-  }
-
-  if (uname == NULL) {
-    for (idx = 0; idx < len; ++idx) {
-      /* Version: [0-9].[0-9]: */
-      if (isdigit(ver[idx])     && ver[idx + 1] == '.' &&
-          isdigit(ver[idx + 2]) && ver[idx + 3] == ':')
-      {
-        asprintf(&buf, "%c.%c",
-                 ver[idx],
-                 ver[idx + 2]);
-        break;
-      }
-      
-      /* Version: [0-9].[0-9].[0-9]: */
-      if (isdigit(ver[idx])     && ver[idx + 1] == '.' &&
-          isdigit(ver[idx + 2]) && ver[idx + 3] == '.' &&
-          isdigit(ver[idx + 4]) && ver[idx + 5] == ':')
-      {
-        asprintf(&buf, "%c.%c.%c",
-                 ver[idx],
-                 ver[idx + 2],
-                 ver[idx + 4]);
-        break;
-      }
-      
-      /* Version: [0-9][0-9].[0-9].[0-9]: */
-      if (isdigit(ver[idx])   && isdigit(ver[idx + 1]) &&
-          ver[idx + 2] == '.' && isdigit(ver[idx + 3]) &&
-          ver[idx + 4] == '.' && isdigit(ver[idx + 5]) &&
-          ver[idx + 6] == ':')
-      {
-        asprintf(&buf, "%c%c.%c.%c",
-                 ver[idx],
-                 ver[idx + 1],
-                 ver[idx + 3],
-                 ver[idx + 5]);
-        break;
-      }
-    } /* for (idx ... ) */
-
-    if (buf[1] == '.') {
-      switch (buf[0]) {
-        case '0':
-        case '1':
-        case '2':
-        case '3':
-          asprintf(&uname, "NEXTSTEP %s", buf);
-          break;
-
-        case '4':
-          asprintf(&uname, "OPENSTEP %s", buf);
-          break;
-
-        case '5':
-          for (idx = 0; idx < len; ++idx) {
-            if (ver[idx] == '\n') {
-              ver[idx] = ' ';
-            }
-          }
-          asprintf(&uname, "Rhapsody %s", buf);
-          break;
-        
-        default:
-          asprintf(&uname, "Darwin %s", buf);
-      }
-    } else {
-      asprintf(&uname, "OpenStep %s");
-    }
-
-    MAYBE_FREE(buf);
-  } // if (uname == NULL)
-
-  [(TextField *)hostOS setStringValue:uname];
+  [(TextField *)hostOS setStringValue:[[platform system] stringValue]];
 }
 
 - (void)getCPU
@@ -407,7 +318,6 @@ is_colour(int depth)
 
   return 4;
 }
-#undef to_mb
 
 - (void)getHostData
 {
@@ -442,7 +352,8 @@ is_colour(int depth)
   }
   MAYBE_FREE(buf);
 
-  [hostinfo addObject:[[String alloc] initFromFormat:"\nKernel:\n%s", build]];
+  [hostinfo addObject:[[String alloc] initFromFormat:"\nKernel:\n%s",
+                                      [[platform kernelVersion] stringValue]]];
 
   [hostText setSel:0 :[hostText textLength]];
   [hostText replaceSel:""];
@@ -500,7 +411,6 @@ is_colour(int depth)
     if (!onlyBar) {
       char   *tbytes = NULL;
       char   *fbytes = NULL;
-      char   *pct    = NULL;
       String *buf    = nil;
 
       pretty_bytes(&tbytes, [value blockCount] * [value blockSize]);

@@ -160,6 +160,11 @@
   [[self module] setNetInfoProxy:anObject];
 }
 
+- (void)setPlatformProxy:(id)anObject
+{
+  [[self module] setPlatformProxy:anObject];
+}
+
 @end /* BundleManager */
 
 /* BundleManager.m ends here. */

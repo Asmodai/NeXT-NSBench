@@ -95,6 +95,11 @@
   netInfo = anObject;
 }
 
+- (void)setPlatformProxy:(id)anObject
+{
+  platform = anObject;
+}
+
 @end /* NSBModule */
 
 /* NSBModule.m ends here. */

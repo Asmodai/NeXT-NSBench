@@ -24,12 +24,12 @@ GLOBAL_RESOURCES = CoreMark.tiff cubefire.tiff Disk-CD-CDFS.tiff\
 
 CLASSES = BundleManager.m Controller.m Disk.m Mach.m Malloc.m\
           Manager.m MatrixManager.m NetInfo.m NSBModule.m\
-          Object+Debug.m PercentBar.m PieChart.m String.m\
+          Object+Debug.m PercentBar.m PieChart.m Platform.m String.m\
           UserButtonCell.m Utils.m
 
 HFILES = BundleManager.h Controller.h Disk.h Mach.h Malloc.h\
          Manager.h MatrixManager.h NetInfo.h NSBModule.h\
-         Object+Debug.h PercentBar.h PieChart.h String.h\
+         Object+Debug.h PercentBar.h PieChart.h Platform.h String.h\
          UserButtonCell.h Utils.h
 
 OTHERLINKED = slice.pswraps
@@ -55,6 +55,7 @@ DEBUG_LIBS = $(LIBS)
 PROF_LIBS = $(LIBS)
 
 
+PB_CFLAGS = -O3
 
 
 -include Makefile.preamble

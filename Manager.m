@@ -39,6 +39,7 @@
 #import "NSBModule.h"
 #import "Utils.h"
 #import "String.h"
+#import "Platform.h"
 
 #import <objc/List.h>
 #import <appkit/appkit.h>
@@ -46,7 +47,7 @@
 #import <sys/dirent.h>
 
 /* This will go elsewhere at some point. */
-#define VERSION "0.2"
+#define VERSION "0.3"
 
 static
 BOOL
@@ -79,7 +80,7 @@ fileNameHasExtension(const char *f, const char *e)
   [_mgrInfo      setView:viewInfo];
   [_mgrBenchmark setView:viewBenchmark];
 
-  [txtVersion setStringValue: [version stringValue]];
+  [(TextField *)txtVersion setStringValue: [version stringValue]];
 
   [self createBundlesAndLoadModules:YES];
   [self createBundleLists];
@@ -155,6 +156,7 @@ fileNameHasExtension(const char *f, const char *e)
       // Pass along the various proxies.
       [[bundle module] setMachProxy:[Mach sharedInstance]];
       [[bundle module] setNetInfoProxy:[NetInfo sharedInstance]];
+      [[bundle module] setPlatformProxy:[Platform sharedInstance]];
 
       if ([[bundle module] loadNib] == nil) {
         int res = alertf("NSBench Bundle Loader",

@@ -40,62 +40,33 @@
 
 #import <dpsclient/wraps.h>
 
-#define COL_LINE        0
-#define COL_CURVE       1
-#define COL_FILL        2
-#define COL_TRANS       3
-#define COL_COMPOSITE   4
-#define COL_PATH        5
-#define COL_TEXT        6
-#define COL_WINDOW      7
-
-#define BASE_LINE       42.6094
-#define BASE_CURVE      77.5494
-#define BASE_FILL       107.1696
-#define BASE_TRANS      75.9013
-#define BASE_COMPOSITE  13.5212
-#define BASE_PATH       26.4208
-#define BASE_TEXT       68.0087
-#define BASE_WINDOW     101.3171
-
 typedef struct {
-  char  *system;
-  float  line;
-  float  curve;
-  float  fill;
-  float  trans;
-  float  composite;
-  float  path;
-  float  text;
-  float  window;
-  float  factor;
+  float line;
+  float curve;
+  float fill;
+  float trans;
+  float composite;
+  float path;
+  float text;
+  float window_move;
+  float window_resize;
+  float factor;
 } results_t;
 
-results_t baseline_results[] = {
-  {
-    "33MHz NeXTcube, 128MB RAM, mono",
-    32.9359, 65.1763, 133.4223, 76.4584, 11.1941, 23.1906, 44.6249, 89.4294,
-    2.007016
-  }, {
-    "33MHz NeXTcube, 128MB RAM, NeXTdimension, 64MB RAM, color",
-    44.6269, 79.2581, 107.7586, 75.1541, 14.8810, 43.0756, 67.2495, 105.2853,
-    2.611623
-  },
+static results_t baseline_results = {
+  8.0321,
+  15.3466,
+  31.5577,
+  15.0092,
+  2.8650,
+  6.0385,
+  10.1685,
+  23.2099,
+  40.3454,
+  0.492283
 };
 
 @implementation NXBenchView
-
-inline
-NXPoint
-NSMakePoint(float x, float y)
-{
-  NXPoint p;
-
-  p.x = x;
-  p.y = y;
-
-  return p;
-}
 
 - (id)initFrame:(const NXRect *)rect
 {
@@ -108,7 +79,7 @@ NSMakePoint(float x, float y)
   return self;
 }
 
-- drawSelf:(const NXRect *)rect :(int)count
+- drawSelf:(const NXRect *)rect:(int)count
 {
   [self clear];
 
@@ -141,9 +112,7 @@ NSMakePoint(float x, float y)
   // This is `1' in the original NXBench... ugh.
   srandom([self currentTimeInMs]);
 
-  [self log:"---------------------------------------------------------\n"];
   [self log:"Starting tests.\n"];
-  
   start = [self currentTimeInMs];
 
   [self line];
@@ -167,21 +136,35 @@ NSMakePoint(float x, float y)
   [self text];
   sleep_for_time_interval(1.0);
   
-  [self windowTest];
+  [self windowMove];
+  sleep_for_time_interval(1.0);
+
+  [self windowResize];
   end = [self currentTimeInMs];
 
+  [self clear];
+  meanResult = (resLine       +
+                resCurve      +
+                resFill       +
+                resTrans      +
+                resComposite  +
+                resPath       +
+                resText       +
+                resWindowMove +
+                resWindowResize) / 9.0;
+
+  [self log:"NXFactor = %0.6f\n", meanResult];
   [self log:"Tests complete, run time = %d ms.\n", end - start];
   [self log:"---------------------------------------------------------\n"];
+  [self clearStatus];
 
-  [self clear];
-  meanResult = (resLine +
-                resCurve +
-                resFill +
-                resTrans +
-                resComposite +
-                resPath +
-                resText +
-                resWindowTest) / 8.0;
+  if (txtFactor != nil) {
+    char *buf = NULL;
+
+    asprintf(&buf, "%0.2f", meanResult);
+    [(TextField *)txtFactor setStringValue:buf];
+    MAYBE_FREE(buf);
+  }
 }
 
 - (void)log:(const char *)fmt, ...;
@@ -205,16 +188,6 @@ NSMakePoint(float x, float y)
   xfree(buf);
 }
 
-- (void)setResult:(float)val
-          forTest:(int)test
-{
-  char *buf = NULL;
-
-  asprintf(&buf, "%0.4f", val);
-  [[resMatrix setCol:0:test] setStringValue:buf];
-  MAYBE_FREE(buf);
-}
-
 - (void)clearLog
 {
   if (txtLog == nil) {
@@ -225,6 +198,20 @@ NSMakePoint(float x, float y)
   [txtLog replaceSel:""];
  }
 
+- (void)status:(const char *)msg
+{
+  char *buf = NULL;
+
+  asprintf(&buf, "Running `%s' test.", msg);
+  [txtStatus setStringValue:buf];
+  MAYBE_FREE(buf);
+}
+
+- (void)clearStatus
+{
+  [txtStatus setStringValue:"Ready, please press `run' to start."];
+}
+
 - (float)meanResult
 {
   return meanResult;
@@ -233,6 +220,13 @@ NSMakePoint(float x, float y)
 - (id)setLogText:(id)anObject
 {
   txtLog = anObject;
+
+  return self;
+}
+
+- (id)setTestWindow:(id)anObject
+{
+  wndTest = anObject;
 
   return self;
 }
@@ -247,7 +241,7 @@ NSMakePoint(float x, float y)
   int w         = (int)bounds.size.width;
   int h         = (int)bounds.size.height;
 
-  [[resMatrix cellAt:0:COL_LINE] setStringValue:"..."];
+  [self status:"line drawing"];
 
   [self lockFocus];
   {
@@ -273,12 +267,11 @@ NSMakePoint(float x, float y)
   }
   [self unlockFocus];
 
-  resLine = (1000000.0 / (float)takenTime / 25.5643);
+  resLine = (1000000.0 / (float)takenTime / baseline_results.line);
   [self log:"Line: time taken: %d ms, raw: %0.4f, factor: %0.4f\n",
         takenTime,
         1000000.0 / (float)takenTime,
         resLine];
-  [[resMatrix cellAt:0:COL_LINE] setFloatValue:resLine];
 }
 
 - (void)curve
@@ -291,7 +284,7 @@ NSMakePoint(float x, float y)
   int w         = (int)bounds.size.width;
   int h         = (int)bounds.size.height;
   
-  [[resMatrix cellAt:0:COL_CURVE] setStringValue:"..."];
+  [self status:"curve drawing"];
 
   [self lockFocus];
   {
@@ -322,12 +315,11 @@ NSMakePoint(float x, float y)
   }
   [self unlockFocus];
   
-  resCurve = (1000000.0/(float)takenTime/47.6054);
+  resCurve = (1000000.0/(float)takenTime/baseline_results.curve);
   [self log:"Curve: time taken: %d ms, raw: %0.4f, factor: %0.4f\n",
         takenTime,
         1000000.0 / (float)takenTime,
         resCurve];
-  [[resMatrix cellAt:0:COL_CURVE] setFloatValue:resCurve];
 }
 
 - (void)fill
@@ -340,7 +332,7 @@ NSMakePoint(float x, float y)
   int w         = (int)bounds.size.width;
   int h         = (int)bounds.size.height;
   
-  [[resMatrix cellAt:0:COL_FILL] setStringValue:"..."];
+  [self status:"Fill"];
   
   [self lockFocus];
   {
@@ -365,13 +357,12 @@ NSMakePoint(float x, float y)
   }
   [self unlockFocus];
   
-  resFill = (1000000.0/(float)takenTime/92.0640);
+  resFill = (1000000.0/(float)takenTime/baseline_results.fill);
 
   [self log:"Fill: time taken: %d ms, raw: %0.4f, factor: %0.4f\n",
         takenTime,
         1000000.0 / (float)takenTime,
         resFill];
-  [[resMatrix cellAt:0:COL_FILL] setFloatValue:resFill];
 }
 
 - (void)trans
@@ -380,7 +371,7 @@ NSMakePoint(float x, float y)
   int startTime = 0;
   int takenTime = 0;
   
-  [[resMatrix cellAt:0:COL_TRANS] setStringValue:"..."];
+  [self status:"transposition"];
   
   [self lockFocus];
   {
@@ -411,12 +402,11 @@ NSMakePoint(float x, float y)
   }
   [self unlockFocus];
 
-  resTrans = (1000000.0 / (float)takenTime / 47.1965);
+  resTrans = (1000000.0 / (float)takenTime / baseline_results.trans);
   [self log:"Transpose: time taken: %d ms, raw: %0.4f, factor: %0.4f\n",
         takenTime,
         1000000.0 / (float)takenTime,
         resTrans];
-  [[resMatrix cellAt:0:COL_TRANS] setFloatValue:resTrans];
 }
 
 - (void)composite
@@ -429,7 +419,7 @@ NSMakePoint(float x, float y)
   int w         = (int)bounds.size.width;
   int h         = (int)bounds.size.height;
   
-  [[resMatrix cellAt:0:COL_COMPOSITE] setStringValue:"..."];
+  [self status:"composition"];
   
   [self lockFocus];
   {
@@ -483,12 +473,11 @@ NSMakePoint(float x, float y)
   }
   [self unlockFocus];
   
-  resComposite = (1000000.0/(float)takenTime/8.81096);
+  resComposite = (1000000.0/(float)takenTime/baseline_results.composite);
   [self log:"Composite: time taken: %d ms, raw: %0.4f, factor: %0.4f\n",
         takenTime,
         1000000.0 / (float)takenTime,
         resComposite];
-  [[resMatrix cellAt:0:COL_COMPOSITE] setFloatValue:resComposite];
 }
 
 - (void)userPath
@@ -505,7 +494,8 @@ NSMakePoint(float x, float y)
   int    startTime = 0;
   int    takenTime = 0;
   
-  [[resMatrix cellAt:0:COL_PATH] setStringValue:"..."];
+  [self status:"userpath"];
+
   [[self window] getFrame:&vRect];
   bbox[2] = w = (int)vRect.size.width;
   bbox[3] = h = (int)vRect.size.height;
@@ -539,12 +529,11 @@ NSMakePoint(float x, float y)
   }
   [self unlockFocus];
 
-  resPath = (1000000.0 / (float)takenTime / 8.0);
+  resPath = (1000000.0 / (float)takenTime / baseline_results.path);
   [self log:"Userpath: time taken: %d ms, raw: %0.4f, factor: %0.4f\n",
         takenTime,
         1000000.0 / (float)takenTime,
         resPath];
-  [[resMatrix cellAt:0:COL_PATH] setFloatValue:resPath];
 }
 
 - (void)text
@@ -558,7 +547,7 @@ NSMakePoint(float x, float y)
   int  h         = (int)bounds.size.height;
   char s[9]      = { 0 };
 
-  [[resMatrix cellAt:0:COL_TEXT] setStringValue:"..."];
+  [self status:"text"];
   
   [self lockFocus];
   {
@@ -588,15 +577,14 @@ NSMakePoint(float x, float y)
   }
   [self unlockFocus];
   
-  resText = (1000000.0/(float)takenTime/37.3552);
+  resText = (1000000.0/(float)takenTime/baseline_results.text);
   [self log:"Text: time taken: %d ms, raw: %0.4f, factor: %0.4f\n",
         takenTime,
         1000000.0 / (float)takenTime,
         resText];
-  [[resMatrix cellAt:0:COL_TEXT] setFloatValue:resText];
 }
 
-- (void)windowTest
+- (void)windowMove
 {
   int    i         = 0;
   int    j         = 0;
@@ -606,7 +594,7 @@ NSMakePoint(float x, float y)
   float  y         = 0.0;
   NXRect theRect   = { 0 };
   
-  [[resMatrix cellAt:0:COL_WINDOW] setStringValue:"..."];
+  [self status:"window movement"];
   
   [[self window] getFrame:&theRect];
   x = theRect.origin.x;
@@ -638,12 +626,54 @@ NSMakePoint(float x, float y)
   }
   [[self window] makeKeyAndOrderFront:self];
   
-  resWindowTest = (1000000.0/(float)takenTime/18.01);
-  [self log:"Window: time taken: %d ms, raw: %0.4f, factor: %0.4f\n",
+  resWindowMove = (1000000.0/(float)takenTime/baseline_results.window_move);
+  [self log:"Window move: time taken: %d ms, raw: %0.4f, factor: %0.4f\n",
         takenTime,
         1000000.0 / (float)takenTime,
-        resWindowTest];
-  [[resMatrix cellAt:0:COL_WINDOW] setFloatValue:resWindowTest];
+        resWindowMove];
+}
+
+- (void)windowResize
+{
+  int    i         = 0;
+  int    j         = 0;
+  int    startTime = 0;
+  int    takenTime = 0;
+  float  w         = 0.0;
+  float  h         = 0.0;
+  NXRect theRect   = { 0 };
+  
+  if (wndTest == nil) {
+    return;
+  }
+
+  [self status:"window movement"];
+  [wndTest makeKeyAndOrderFront:self];
+  
+  [wndTest getFrame:&theRect];
+  w = theRect.size.width;
+  h = theRect.size.height;
+
+  {
+    startTime = [self currentTimeInMs];
+  
+    for (j = 50; j < h; j = j + 50) {
+      for (i = 90; i < w; i = i + 50) {
+        [wndTest sizeWindow:i:j];
+        [wndTest display];
+      }
+    }
+
+    takenTime = [self currentTimeInMs] - startTime;
+  }
+  [[self window] makeKeyAndOrderFront:self];
+  [wndTest orderOut:self];
+  
+  resWindowResize = (1000000.0/(float)takenTime/baseline_results.window_resize);
+  [self log:"Window resize: time taken: %d ms, raw: %0.4f, factor: %0.4f\n",
+        takenTime,
+        1000000.0 / (float)takenTime,
+        resWindowResize];
 }
 
 @end /* NXBenchView */

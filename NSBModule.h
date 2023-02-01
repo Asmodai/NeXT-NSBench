@@ -45,6 +45,7 @@
 
   // XXX make these into a struct or something.
   id mach;                      // Object for Mach calls.
+  id platform;                  // Object for Platform info.
   id netInfo;                   // Object for NetInfo calls.
   id disk;                      // Object for Disk info.
 }
@@ -59,6 +60,7 @@
 - (id)buttonBarView;
 
 - (void)setMachProxy:(id)anObject;
+- (void)setPlatformProxy:(id)anObject;
 - (void)setNetInfoProxy:(id)anObject;
 
 @end

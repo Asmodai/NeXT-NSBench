@@ -63,6 +63,7 @@
 
 - (void)setMachProxy:(id)anObject;
 - (void)setNetInfoProxy:(id)anObject;
+- (void)setPlatformProxy:(id)anObject;
 
 @end
 

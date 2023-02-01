@@ -47,6 +47,7 @@
 
   id wndLog;
   id txtLog;
+  id wndTest;
 }
 
 - didLoadNib;

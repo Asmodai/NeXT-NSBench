@@ -1,12 +1,11 @@
 /* -*- ObjC -*-
- * NXFactor.m  --- Some title
+ * Platform.h --- Platform detection.
  *
  * Copyright (c) 2023 Paul Ward <asmodai@gmail.com>
- * Copyright (c) 2001-2002 by Philippe C.D. Robert
  *
  * Author:     Paul Ward <asmodai@gmail.com>
  * Maintainer: Paul Ward <asmodai@gmail.com>
- * Created:    Fri, 27 Jan 2023 04:22:02 +0000 (GMT)
+ * Created:    Wed,  1 Feb 2023 10:13:32 +0000 (GMT)
  */
 
 /* {{{ License: */
@@ -32,48 +31,39 @@
  */
 /* }}} */
 
-#import "BundlePrimary.h"
-#import "NXBenchView.h"
+#ifndef _Platform_h_
+#define _Platform_h_
 
-@implementation NXFactor
+#import <objc/Object.h>
 
-- didLoadNib
+#import "String.h"
+
+@interface Platform : Object
 {
-  return self;
+  String *_name;
+  String *_platform;
+  String *_codename;
+  int     _major;
+  int     _minor;
+  String *_kernel;
+  BOOL    _openstep;
 }
 
-- showLog:sender
-{
-  [wndLog makeKeyAndOrderFront:self];
++ (id)sharedInstance;
++ (void)initialize;
 
-  return self;
-}
+- (String *)system;             // "NEXTSTEP 3.7"
+- (String *)platform;           // "NEXTSTEP"
+- (String *)codeName;           // "PhotonV84"
+- (int)majorVersion;            // 3
+- (int)minorVersion;            // 7
+- (String *)kernelVersion;      // "NeXT Mach ..."
+- (BOOL)isOpenStep;             // NO
 
-- clear:sender
-{
-  [vvwFactor clear];
+- (void)_getKernelVersion;
 
-  return self;
-}
+@end
 
-- run:sender
-{
-  NXRunAlertPanel("`NXFactor' Benchmark",
-                  "To get reliable results with this benchmark, "
-                  "please quit all other applications and ensure "
-                  "that NSBench is on top -- Command double-click "
-                  "NSBench's miniwindow.",
-                  "OK",
-                  NULL,
-                  NULL);
+#endif /* !_Platform_h_ */
 
-  [vvwFactor setTestWindow:wndTest];
-  [vvwFactor setLogText:txtLog];
-  [vvwFactor runBenchmark];
-
-  return self;
-}
-
-@end /* NXFactor */
-
-/* NXFactor.m ends here. */
+/* Platform.h ends here. */
