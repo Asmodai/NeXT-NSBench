@@ -6,4 +6,5 @@
 view
 directory SysInfo.bproj
 directory NXFactor.bproj
+directory CoreMark.bproj
 

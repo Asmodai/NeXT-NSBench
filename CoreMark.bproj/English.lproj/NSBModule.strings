@@ -1,0 +1,14 @@
+/* Description of the module. */
+"Description" = "CoreMark benchmark.";
+
+/* Author. */
+"Author" = "By Paul Ward";
+
+/* Version number. */
+"Version" = "Version 1.0";
+
+/* Copyright. */
+"Copyright" = "\n\nCopyright   2023 Paul Ward.\nCopyright   2018 Embedded Microprocessor Benchmark Consortium.\nReleased under the terms of the Apache License, Version 2.0.";
+
+/* Name of the module. */
+"Name" = "CoreMark";

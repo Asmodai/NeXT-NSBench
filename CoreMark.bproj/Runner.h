@@ -1,11 +1,11 @@
 /* -*- ObjC -*-
- * Mach.h --- Mach message proxy interface.
+ * Runner.h --- Some title
  *
  * Copyright (c) 2023 Paul Ward <asmodai@gmail.com>
  *
  * Author:     Paul Ward <asmodai@gmail.com>
  * Maintainer: Paul Ward <asmodai@gmail.com>
- * Created:    Fri, 27 Jan 2023 20:31:59 +0000 (GMT)
+ * Created:    Fri,  3 Feb 2023 23:38:31 +0000 (GMT)
  */
 
 /* {{{ License: */
@@ -27,46 +27,42 @@
 
 /* {{{ Commentary: */
 /*
- * This exists here because bundles cannot link against
- * libsys_s at runtime.
+ *
  */
 /* }}} */
 
-#ifndef _Mach_h_
-#define _Mach_h_
+#ifndef _Runner_h_
+#define _Runner_h_
+
+#import "core_portme.h"
+#import "result.h"
+
+#import <sys/types.h>
 
 #import <objc/Object.h>
 
-#import <sys/types.h>
-#import <sys/vfs.h>
-#import <ansi/time.h>
-
-#import <mach/mach.h>
-#import <mach/vm_statistics.h>
-#import <mach/host_info.h>
-#import <mach/mach_host.h>
-
-
-@interface Mach : Object
+@interface Runner : Object
 {
-  id mach;
+  id txtOutput;
+  id txtScore;
+  id txtStatus;
+
+  id btnClear;
+  id btnRun;
 }
 
-+ (id)sharedInstance;
-+ (void)initialize;
-
 - (id)init;
+- (id)free;
 
-- (clock_t)clock;
-- (int)host_id;
-- (void)kernel_version:(kernel_version_t *)data;
-- (void)cpu_type:(char **)data
-         subtype:(char **)data;
-- (void)vm_statistics:(vm_statistics_data_t *)data;
-- (void)machine_info:(machine_info_data_t *)data;
+- (id)score:(double)val;
+- (id)status:(const char *)msg;
+- (id)log:(const char *)fmt, ...;
 
-@end
+- runBenchmark:sender;
+- clearResults:sender;
 
-#endif /* !_Mach_h_ */
+@end /* Runner */
 
-/* Mach.h ends here. */
+#endif /* !_Runner_h_ */
+
+/* Runner.h ends here. */

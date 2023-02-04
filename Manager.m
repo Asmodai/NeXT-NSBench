@@ -47,7 +47,7 @@
 #import <sys/dirent.h>
 
 /* This will go elsewhere at some point. */
-#define VERSION "0.3"
+#define VERSION "0.4"
 
 static
 BOOL
@@ -82,7 +82,7 @@ fileNameHasExtension(const char *f, const char *e)
 
   [(TextField *)txtVersion setStringValue: [version stringValue]];
 
-  [self createBundlesAndLoadModules:YES];
+  [self createBundlesAndLoadModules:NO];
   [self createBundleLists];
 
   [[viewBenchmark window] makeKeyAndOrderFront:self];
@@ -94,7 +94,6 @@ fileNameHasExtension(const char *f, const char *e)
 - free
 {
   [viewCurrentBenchmark removeFromSuperview];
-  [viewCurrentInfo      removeFromSuperview];
 
   _lstBundles = [[_lstBundles freeObjects] free];
   _lstBundles = NULL;
@@ -113,6 +112,29 @@ fileNameHasExtension(const char *f, const char *e)
   /* Only care for bundles inside the app wrapper. */
   [self createBundlesForDirectory:path
                       loadModules:doLoad];
+
+  return self;
+}
+
+- (id)loadBundle:(BundleManager *)bundle
+{
+  // Set proxy objects.
+  [[bundle module] setMachProxy:[Mach sharedInstance]];
+  [[bundle module] setNetInfoProxy:[NetInfo sharedInstance]];
+  [[bundle module] setPlatformProxy:[Platform sharedInstance]];
+
+  // Load in the bundle's nib.
+  if ([[bundle module] loadNib] == nil) {
+    int res = alertf("NSBench Bundle Loader",
+                     "Quit",
+                     "Ignore",
+                     NULL,
+                     "Could not load the bundle for '%s'.",
+                     [bundle moduleName]);
+    if (res == 1) {
+      exit(EXIT_FAILURE);
+    }
+  }
 
   return self;
 }
@@ -150,25 +172,7 @@ fileNameHasExtension(const char *f, const char *e)
     [_lstBundles addObjectIfAbsent:bundle];
 
     if (doLoad) {
-      // Force the extraction of the module's name from the strings file.
-      [bundle moduleName];
-
-      // Pass along the various proxies.
-      [[bundle module] setMachProxy:[Mach sharedInstance]];
-      [[bundle module] setNetInfoProxy:[NetInfo sharedInstance]];
-      [[bundle module] setPlatformProxy:[Platform sharedInstance]];
-
-      if ([[bundle module] loadNib] == nil) {
-        int res = alertf("NSBench Bundle Loader",
-                         "Quit",
-                         "Ignore",
-                         NULL,
-                         "Could not load the bundle for '%s'.",
-                         [bundle moduleName]);
-        if (res == 1) {
-          exit(EXIT_FAILURE);
-        }
-      }
+      [self loadBundle:bundle];
     }
   }
 
@@ -229,6 +233,13 @@ fileNameHasExtension(const char *f, const char *e)
     id             view = [[bndl module] benchmarkView];
     id             bar  = [[bndl module] buttonBarView];
 
+    if (view == nil) {
+      /* Load in bundle and try again. */
+      [self loadBundle:bndl];
+      view = [[bndl module] benchmarkView];
+      bar  = [[bndl module] buttonBarView];
+    }
+
     if (view != nil) {
       [viewBenchmark setContentView:[view contentView]];
     }
@@ -249,12 +260,20 @@ fileNameHasExtension(const char *f, const char *e)
 
   if (btn && [_lstBundles indexOf:[btn user]] != NX_NOT_IN_LIST) {
     BundleManager *b = (BundleManager *)[btn user];
-    id             v = [[b module] infoView];
-
-    [viewInfo setContentView:[v contentView]];
-    [viewInfo display];
-    [wndInfo display];
+ 
+    [(TextField *)txtBundleName      setStringValue:[b moduleName]];
+    [(TextField *)txtBundleAuthor    setStringValue:[b moduleAuthor]];
+    [(TextField *)txtBundleVersion   setStringValue:[b moduleVersion]];
+    [(TextField *)txtBundleCopyright setStringValue:[b moduleCopyright]];
+    
+    [viewInfo setContentView:[viewInfoTemplate contentView]];
+  } else {
+    [viewInfo setContentView:[viewInfoNotLoaded contentView]];
   }
+
+  [viewInfo display];
+  [wndInfo display];
+
 }
 
 - showInfo:sender

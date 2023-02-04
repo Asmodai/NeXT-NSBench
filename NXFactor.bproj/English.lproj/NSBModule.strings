@@ -1,5 +1,14 @@
 /* Description of the module. */
 "Description" = "NXBench NXFactor.";
 
+/* Author. */
+"Author" = "By Paul Ward";
+
+/* Version number. */
+"Version" = "Version 1.0";
+
+/* Copyright. */
+"Copyright" = "\nCopyright   2023 Paul Ward.\nCopyright   2001-2002 Philippe C.D. Robert.\nCopyright   1992-1998 George Fankhauser.\nReleased under the terms of the GNU GPL.";
+
 /* Name of the module. */
 "Name" = "NXFactor";

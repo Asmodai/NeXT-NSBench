@@ -34,6 +34,7 @@
 #import "NXBenchView.h"
 #import "../Malloc.h"
 #import "../Utils.h"
+#import "../Timing.h"
 
 #import <libc.h>
 #import <stdlib.h>
@@ -54,17 +55,19 @@ typedef struct {
 } results_t;
 
 static results_t baseline_results = {
-  8.0321,
-  15.3466,
-  31.5577,
-  15.0092,
-  2.8650,
-  6.0385,
-  10.1685,
-  23.2099,
-  40.3454,
-  0.492283
+  4.4617,
+  8.8313,
+  12.1780,
+  6.0498,
+  2.9950,
+  3.7431,
+  5.1954,
+  14.3647,
+  39.4322,
+  0.999056
 };
+
+static Timing *shared_timer = nil;
 
 @implementation NXBenchView
 
@@ -109,8 +112,14 @@ static results_t baseline_results = {
   int start = 0;
   int end   = 0;
 
+
   // This is `1' in the original NXBench... ugh.
   srandom([self currentTimeInMs]);
+
+  if (shared_timer == nil) {
+    shared_timer = [[Timing alloc] initWithTag:1];
+  }
+  [shared_timer reset];
 
   [self log:"Starting tests.\n"];
   start = [self currentTimeInMs];
@@ -165,6 +174,17 @@ static results_t baseline_results = {
     [(TextField *)txtFactor setStringValue:buf];
     MAYBE_FREE(buf);
   }
+}
+
+- (void)logTimer
+{
+  char *buf = NULL;
+
+  [shared_timer summary:&buf];
+  if (buf) {
+    [self log:"%s\n", buf];
+  }
+  MAYBE_FREE(buf);
 }
 
 - (void)log:(const char *)fmt, ...;
@@ -241,6 +261,7 @@ static results_t baseline_results = {
   int w         = (int)bounds.size.width;
   int h         = (int)bounds.size.height;
 
+  [shared_timer reset];
   [self status:"line drawing"];
 
   [self lockFocus];
@@ -252,6 +273,7 @@ static results_t baseline_results = {
       for (k = 0; k < 100; k++) {
         i = k + 100 * j;
         
+        [shared_timer enter:PSTIME];
         PSsethsbcolor(((float)(i % 32)) / 32.0, 1.0, 1.0);
         PSmoveto((float)((i + 120) % w),
                  (float)(i % h));
@@ -260,6 +282,7 @@ static results_t baseline_results = {
         PSstroke();
 
         [[self window] flushWindow];
+        [shared_timer leave];
       }
     }
 
@@ -272,6 +295,8 @@ static results_t baseline_results = {
         takenTime,
         1000000.0 / (float)takenTime,
         resLine];
+  [self logTimer];
+  [self log:"\n"];
 }
 
 - (void)curve
@@ -284,6 +309,7 @@ static results_t baseline_results = {
   int w         = (int)bounds.size.width;
   int h         = (int)bounds.size.height;
   
+  [shared_timer reset];
   [self status:"curve drawing"];
 
   [self lockFocus];
@@ -294,6 +320,8 @@ static results_t baseline_results = {
     for(j=0; j < 100; j++) {
       for (k=0; k < 50; k++) {
         i = k + 100 * j;
+        
+        [shared_timer enter:PSTIME];
         PSsethsbcolor(((float)(i % 32)) / 32.0, 1.0, 1.0);
         
         PSmoveto((float) ((i + 120) % w),
@@ -308,6 +336,7 @@ static results_t baseline_results = {
 
         PSstroke();
         [[self window] flushWindow];
+        [shared_timer leave];
       }
     }
 
@@ -315,11 +344,13 @@ static results_t baseline_results = {
   }
   [self unlockFocus];
   
-  resCurve = (1000000.0/(float)takenTime/baseline_results.curve);
-  [self log:"Curve: time taken: %d ms, raw: %0.4f, factor: %0.4f\n",
+  resCurve = (1000000.0 / (float)takenTime / baseline_results.curve);
+  [self log:"Curve: time taken: %dms, raw: %0.4f, factor: %0.4f\n",
         takenTime,
         1000000.0 / (float)takenTime,
         resCurve];
+  [self logTimer];
+  [self log:"\n"];
 }
 
 - (void)fill
@@ -332,6 +363,7 @@ static results_t baseline_results = {
   int w         = (int)bounds.size.width;
   int h         = (int)bounds.size.height;
   
+  [shared_timer reset];
   [self status:"Fill"];
   
   [self lockFocus];
@@ -342,6 +374,7 @@ static results_t baseline_results = {
     for(j=0; j < 100; j++) {
       for (k=0; k < 50; k++) {
         i = k + 100 * j;
+        [shared_timer enter:PSTIME];
         PSsethsbcolor(((float)(i % 32)) / 32.0, 1.0, 1.0);
         
         PSrectfill((float)(random() % w),
@@ -350,6 +383,7 @@ static results_t baseline_results = {
                    100.0);
 
         [[self window] flushWindow];
+        [shared_timer leave];
       }
     }
 
@@ -357,12 +391,14 @@ static results_t baseline_results = {
   }
   [self unlockFocus];
   
-  resFill = (1000000.0/(float)takenTime/baseline_results.fill);
+  resFill = (1000000.0 / (float)takenTime / baseline_results.fill);
 
   [self log:"Fill: time taken: %d ms, raw: %0.4f, factor: %0.4f\n",
         takenTime,
         1000000.0 / (float)takenTime,
         resFill];
+  [self logTimer];
+  [self log:"\n"];
 }
 
 - (void)trans
@@ -371,6 +407,7 @@ static results_t baseline_results = {
   int startTime = 0;
   int takenTime = 0;
   
+  [shared_timer reset];
   [self status:"transposition"];
   
   [self lockFocus];
@@ -380,6 +417,7 @@ static results_t baseline_results = {
     startTime = [self currentTimeInMs];
     
     for (i=0; i < 150; i++) {
+      [shared_timer enter:PSTIME];
       PSgsave();
       PSsethsbcolor(((float)(i % 32)) / 32.0, 1.0, 1.0);
 
@@ -396,6 +434,7 @@ static results_t baseline_results = {
       
       [[self window] flushWindow];
       PSgrestore();
+      [shared_timer leave];
     }
 
     takenTime = [self currentTimeInMs] - startTime;    
@@ -407,6 +446,8 @@ static results_t baseline_results = {
         takenTime,
         1000000.0 / (float)takenTime,
         resTrans];
+  [self logTimer];
+  [self log:"\n"];
 }
 
 - (void)composite
@@ -419,6 +460,7 @@ static results_t baseline_results = {
   int w         = (int)bounds.size.width;
   int h         = (int)bounds.size.height;
   
+  [shared_timer reset];
   [self status:"composition"];
   
   [self lockFocus];
@@ -429,6 +471,7 @@ static results_t baseline_results = {
       for (k=0; k < 100; k++) {
         i = k + 100 * j;
 
+        [shared_timer enter:PSTIME];
         PScomposite((float)(i % w),
                     (float)(random() % h),
                     100.0,
@@ -466,6 +509,7 @@ static results_t baseline_results = {
                     NX_COPY);
 
         [[self window] flushWindow];
+        [shared_timer leave];
       }
     }
 
@@ -473,11 +517,13 @@ static results_t baseline_results = {
   }
   [self unlockFocus];
   
-  resComposite = (1000000.0/(float)takenTime/baseline_results.composite);
+  resComposite = (1000000.0 / (float)takenTime / baseline_results.composite);
   [self log:"Composite: time taken: %d ms, raw: %0.4f, factor: %0.4f\n",
         takenTime,
         1000000.0 / (float)takenTime,
         resComposite];
+  [self logTimer];
+  [self log:"\n"];
 }
 
 - (void)userPath
@@ -494,6 +540,7 @@ static results_t baseline_results = {
   int    startTime = 0;
   int    takenTime = 0;
   
+  [shared_timer reset];
   [self status:"userpath"];
 
   [[self window] getFrame:&vRect];
@@ -509,7 +556,10 @@ static results_t baseline_results = {
     for (j = 0; j < 100; j++) {
       for (k = 0; k < 50; k++) {
         i = k + 100 * j;
+
+        [shared_timer enter:PSTIME];
         PSsethsbcolor(((float)(i % 32)) / 32.0, 1.0, 1.0);
+        [shared_timer leave];
 
         data[0] = (float)((i) % w);
         data[1] = (float)((i) % h);
@@ -520,8 +570,10 @@ static results_t baseline_results = {
         data[4] = (float)((i + i) % w);
         data[5] = (float)((i + i)  % h);
 
+        [shared_timer enter:PSTIME];
         DPSDoUserPath(data, 6, dps_short, ops, 4, bbox, dps_ustroke);
         [[self window] flushWindow];
+        [shared_timer leave];
       }
     }
     
@@ -534,6 +586,8 @@ static results_t baseline_results = {
         takenTime,
         1000000.0 / (float)takenTime,
         resPath];
+  [self logTimer];
+  [self log:"\n"];
 }
 
 - (void)text
@@ -547,6 +601,7 @@ static results_t baseline_results = {
   int  h         = (int)bounds.size.height;
   char s[9]      = { 0 };
 
+  [shared_timer reset];
   [self status:"text"];
   
   [self lockFocus];
@@ -558,18 +613,22 @@ static results_t baseline_results = {
       for (k=0; k < 50; k++) {
         i = k + 100 * j;
         
+        [shared_timer enter:PSTIME];
         PSsethsbcolor(((float)(i % 32)) / 32.0, 1.0, 1.0);
         PSmoveto((float) (random() % w),
                  (float) (random() % h));
+        [shared_timer leave];
 
         s[0] = 'R' + random() % 10; s[1] = 'h' + random() % 22;
         s[2] = 'a' + random() % 3;  s[3] = 'p' + random() % 6;
         s[4] = 's' + random() % 7;  s[5] = 'o' + random() % 6;
         s[6] = 'd' + random() % 22; s[7] = 'y' + random() % 8;
         s[8] = '\0';
-        PSshow(s);
 
+        [shared_timer enter:PSTIME];
+        PSshow(s);
         [[self window] flushWindow];
+        [shared_timer leave];
       }
     }
 
@@ -577,11 +636,13 @@ static results_t baseline_results = {
   }
   [self unlockFocus];
   
-  resText = (1000000.0/(float)takenTime/baseline_results.text);
+  resText = (1000000.0 / (float)takenTime / baseline_results.text);
   [self log:"Text: time taken: %d ms, raw: %0.4f, factor: %0.4f\n",
         takenTime,
         1000000.0 / (float)takenTime,
         resText];
+  [self logTimer];
+  [self log:"\n"];
 }
 
 - (void)windowMove
@@ -594,6 +655,7 @@ static results_t baseline_results = {
   float  y         = 0.0;
   NXRect theRect   = { 0 };
   
+  [shared_timer reset];
   [self status:"window movement"];
   
   [[self window] getFrame:&theRect];
@@ -605,20 +667,30 @@ static results_t baseline_results = {
   
     for (j=0; j < 10; j++) {
       for (i=0; i < 25; i++) {
+        [shared_timer enter:PSTIME];
         [[self window] moveTo:++x :++y];
+        [shared_timer leave];
       }
       for (i=0; i < 25; i++) {
+        [shared_timer enter:PSTIME];
         [[self window] moveTo:++x :--y];
+        [shared_timer leave];
       }
       for (i=0; i < 25; i++) {
+        [shared_timer enter:PSTIME];
         [[self window] moveTo:--x :--y];
+        [shared_timer leave];
       }
       for (i=0; i < 25; i++) {
+        [shared_timer enter:PSTIME];
         [[self window] moveTo:--x :++y];
+        [shared_timer leave];
       }
       for (i=0; i < 10; i++) {
+        [shared_timer enter:PSTIME];
         [[self window] orderOut:self];
         [[self window] orderFront:self];
+        [shared_timer leave];
       }
     }
 
@@ -626,11 +698,13 @@ static results_t baseline_results = {
   }
   [[self window] makeKeyAndOrderFront:self];
   
-  resWindowMove = (1000000.0/(float)takenTime/baseline_results.window_move);
+  resWindowMove = (1000000.0 / (float)takenTime / baseline_results.window_move);
   [self log:"Window move: time taken: %d ms, raw: %0.4f, factor: %0.4f\n",
         takenTime,
         1000000.0 / (float)takenTime,
         resWindowMove];
+  [self logTimer];
+  [self log:"\n"];
 }
 
 - (void)windowResize
@@ -647,6 +721,7 @@ static results_t baseline_results = {
     return;
   }
 
+  [shared_timer reset];
   [self status:"window movement"];
   [wndTest makeKeyAndOrderFront:self];
   
@@ -659,8 +734,10 @@ static results_t baseline_results = {
   
     for (j = 50; j < h; j = j + 50) {
       for (i = 90; i < w; i = i + 50) {
+        [shared_timer enter:WALLTIME];
         [wndTest sizeWindow:i:j];
         [wndTest display];
+        [shared_timer leave];
       }
     }
 
@@ -669,11 +746,13 @@ static results_t baseline_results = {
   [[self window] makeKeyAndOrderFront:self];
   [wndTest orderOut:self];
   
-  resWindowResize = (1000000.0/(float)takenTime/baseline_results.window_resize);
+  resWindowResize = (1000000.0 / (float)takenTime / baseline_results.window_resize);
   [self log:"Window resize: time taken: %d ms, raw: %0.4f, factor: %0.4f\n",
         takenTime,
         1000000.0 / (float)takenTime,
         resWindowResize];
+  [self logTimer];
+  [self log:"\n"];
 }
 
 @end /* NXBenchView */

@@ -7,20 +7,25 @@
 # and Makefile.postamble (both optional), and Makefile will include them.
 #
 
-NAME = NXFactor
+NAME = CoreMark
 
 PROJECTVERSION = 1.1
 LANGUAGE = English
 
-LOCAL_RESOURCES = NXFactor.nib NSBModule.strings
+LOCAL_RESOURCES = CoreMark.nib NSBModule.strings
 
-GLOBAL_RESOURCES = cubefire.tiff NSBModule.tiff
+GLOBAL_RESOURCES = NSBModule.tiff
 
-CLASSES = BundlePrimary.m NXBenchView.m
+CLASSES = BundlePrimary.m core_portme.m Runner.m
 
-HFILES = BundlePrimary.h NXBenchView.h
+HFILES = BundlePrimary.h coremark.h core_portme.h result.h Runner.h\
+         stdint.h
+
+CFILES = core_list_join.c core_main.c core_matrix.c core_state.c\
+         core_util.c
 
 OTHERSRCS = Makefile.preamble Makefile Makefile.postamble
+
 
 MAKEFILEDIR = /NextDeveloper/Makefiles/app
 MAKEFILE = bundle.make

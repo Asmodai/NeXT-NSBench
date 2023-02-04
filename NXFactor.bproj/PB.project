@@ -1,11 +1,11 @@
-BUNDLE_EXTENSION = bundle;
+LANGUAGE = English;
 FILESTABLE = {
     CLASSES = (BundlePrimary.m, NXBenchView.m);
     OTHER_RESOURCES = ();
     OTHER_SOURCES = (Makefile.preamble, Makefile, Makefile.postamble);
     H_FILES = (BundlePrimary.h, NXBenchView.h);
     INTERFACES = (NXFactor.nib);
-    IMAGES = (NSBModule.tiff);
+    IMAGES = (cubefire.tiff, NSBModule.tiff);
     STRINGS_FILES = (NSBModule.strings);
 };
 LOCALIZABLE_FILES = {
@@ -16,5 +16,5 @@ PROJECTVERSION = 1.1;
 PROJECTTYPE = Bundle;
 PROJECTNAME = NXFactor;
 GENERATEMAIN = YES;
-LANGUAGE = English;
 DOCICONFILES = ();
+BUNDLE_EXTENSION = bundle;

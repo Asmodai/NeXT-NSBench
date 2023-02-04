@@ -1,5 +1,14 @@
 /* Description of the module. */
 "Description" = "System Information.";
 
+/* Author. */
+"Author" = "By Paul Ward";
+
+/* Version number. */
+"Version" = "Version 1.0";
+
+/* Copyright. */
+"Copyright" = "\n\n\nCopyright   2023 Paul Ward.\nReleased under the terms of the GNU GPL.";
+
 /* Name of the module. */
 "Name" = "SysInfo";

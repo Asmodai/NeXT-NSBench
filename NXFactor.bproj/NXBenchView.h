@@ -4,7 +4,7 @@
  * Copyright (c) 2023 Paul Ward <asmodai@gmail.com>
  * Copyright (c) 2001-2002 by Philippe C.D. Robert
  *
- * Time-stamp: <23/02/01 18:49:36 asmodai>
+ * Time-stamp: <23/02/01 23:04:22 asmodai>
  *
  * Author:     Paul Ward <asmodai@gmail.com>
  * Maintainer: Paul Ward <asmodai@gmail.com>
@@ -69,6 +69,7 @@
 - (id)setLogText:(id)anObject;
 
 - (void)log:(const char *)fmt, ...;
+- (void)logTimer;
 - (void)clearLog;
 - (void)status:(const char *)msg;
 - (void)clearStatus;

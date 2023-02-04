@@ -48,6 +48,9 @@
 
   moduleName        = NULL;
   moduleDescription = NULL;
+  moduleAuthor      = NULL;
+  moduleVersion     = NULL;
+  moduleCopyright   = NULL;
   moduleImage       = NULL;
   module            = nil;
 
@@ -58,8 +61,11 @@
 {
   DESTROY(module);
 
-  moduleName        = NULL;
-  moduleDescription = NULL;
+  MAYBE_FREE(moduleName);
+  MAYBE_FREE(moduleDescription);
+  MAYBE_FREE(moduleAuthor);
+  MAYBE_FREE(moduleVersion);
+  MAYBE_FREE(moduleCopyright);
 
   MAYBE_FREE((char *)moduleImage);
 
@@ -89,9 +95,53 @@
                                          "Description",
                                          "Unknown module",
                                          "Description of module");
+    printf("Well, meh: %s\n", moduleDescription);
   }
 
   return moduleDescription;
+}
+
+
+- (const char *)moduleAuthor
+{
+  if (!moduleAuthor) {
+    moduleAuthor =
+      NXLocalizedStringFromTableInBundle("NSBModule.strings",
+                                         self,
+                                         "Author",
+                                         "Unknown Author",
+                                         "Primary author.");
+  }
+
+  return moduleAuthor;
+}
+
+- (const char *)moduleVersion
+{
+  if (!moduleVersion) {
+    moduleVersion =
+      NXLocalizedStringFromTableInBundle("NSBModule.strings",
+                                         self,
+                                         "Version",
+                                         "0.1",
+                                         "Module version number.");
+  }
+
+  return moduleVersion;
+}
+
+- (const char *)moduleCopyright
+{
+  if (!moduleCopyright) {
+    moduleCopyright =
+      NXLocalizedStringFromTableInBundle("NSBModule.strings",
+                                         self,
+                                         "Copyright",
+                                         "Copyright   2023, Unknown Author",
+                                         "Copyright year.");
+  }
+
+  return moduleCopyright;
 }
 
 - (NSBModule *)module

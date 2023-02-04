@@ -72,6 +72,11 @@ static Mach *sharedMach = nil;
   return [super init];
 }
 
+- (clock_t)clock
+{
+  return clock();
+}
+
 /* This isn't really a Mach call... but, meh. */
 - (int)host_id
 {

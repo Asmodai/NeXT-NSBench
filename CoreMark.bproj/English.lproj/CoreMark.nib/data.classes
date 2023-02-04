@@ -1,0 +1,26 @@
+NSBModule = {
+    ACTIONS = {}; 
+    OUTLETS = {
+	disk = disk; 
+	mach = mach; 
+	netInfo = netInfo; 
+	platform = platform; 
+	viewBenchmark = viewBenchmark; 
+	viewButtonBar = viewButtonBar; 
+	viewInfo = viewInfo; 
+    }; 
+    SUPERCLASS = Object; 
+};
+CoreMark = {ACTIONS = {}; OUTLETS = {}; SUPERCLASS = NSBModule; };
+Runner = {
+    ACTIONS = {"clearResults:" = "clearResults:"; "runBenchmark:" = "runBenchmark:"; }; 
+    OUTLETS = {
+	btnClear = btnClear; 
+	btnRun = btnRun; 
+	txtOutput = txtOutput; 
+	txtScore = txtScore; 
+	txtStatus = txtStatus; 
+    }; 
+    SUPERCLASS = Object; 
+};
+FirstResponder = {ACTIONS = {}; SUPERCLASS = Object; };

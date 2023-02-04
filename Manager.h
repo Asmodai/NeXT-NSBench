@@ -36,6 +36,7 @@
 
 #import <objc/Object.h>
 #import "MatrixManager.h"
+#import "BundleManager.h"
 
 @class List;
 @class NSBModule;
@@ -45,11 +46,17 @@
   id wndInfo;
   id wndBenchmark;
 
-  id viewInfo;                  // Module info panel view.
+  id txtBundleName;
+  id txtBundleAuthor;
+  id txtBundleVersion;
+  id txtBundleCopyright;
+  
+  id viewInfo;                  // Info view.
+  id viewInfoTemplate;          // Info template view.
+  id viewInfoNotLoaded;         // Info shown when no module loaded.
   id viewBenchmark;             // Module benchmark view.
   id viewButtonBar;             // Module button bar view.
 
-  id viewCurrentInfo;
   id viewCurrentBenchmark;
 
   id btnsInfo;
@@ -66,6 +73,7 @@
 
 - free;
 
+- (id)loadBundle:(BundleManager *)bundle;
 - createBundlesAndLoadModules:(BOOL)doLoad;
 - createBundlesForDirectory:(const char *)path
                 loadModules:(BOOL)doLoad;

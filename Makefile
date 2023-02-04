@@ -15,28 +15,27 @@ LANGUAGE = English
 APPICON = NSBench.tiff
 LOCAL_RESOURCES = NSBench.nib
 
-GLOBAL_RESOURCES = CoreMark.tiff cubefire.tiff Disk-CD-CDFS.tiff\
-                   Disk-CD-DOS.tiff Disk-CD-Mac.tiff Disk-FD-DOS.tiff\
-                   Disk-FD-Mac.tiff Disk-FD-Unix.tiff Disk-HD-DOS.tiff\
-                   Disk-HD-Mac.tiff Disk-HD-Unix.tiff Disk-OD-DOS.tiff\
-                   Disk-OD-Mac.tiff Disk-OD-Unix.tiff DiskIO.tiff\
-                   Graphics.tiff Network.tiff NSBench.tiff SysInfo.tiff
+GLOBAL_RESOURCES = Disk-CD-CDFS.tiff Disk-CD-DOS.tiff Disk-CD-Mac.tiff\
+                   Disk-FD-DOS.tiff Disk-FD-Mac.tiff Disk-FD-Unix.tiff\
+                   Disk-HD-DOS.tiff Disk-HD-Mac.tiff Disk-HD-Unix.tiff\
+                   Disk-OD-DOS.tiff Disk-OD-Mac.tiff Disk-OD-Unix.tiff\
+                   DiskIO.tiff Network.tiff NSBench.tiff
 
 CLASSES = BundleManager.m Controller.m Disk.m Mach.m Malloc.m\
           Manager.m MatrixManager.m NetInfo.m NSBModule.m\
           Object+Debug.m PercentBar.m PieChart.m Platform.m String.m\
-          UserButtonCell.m Utils.m
+          Timing.m UserButtonCell.m Utils.m
 
 HFILES = BundleManager.h Controller.h Disk.h Mach.h Malloc.h\
          Manager.h MatrixManager.h NetInfo.h NSBModule.h\
          Object+Debug.h PercentBar.h PieChart.h Platform.h String.h\
-         UserButtonCell.h Utils.h
+         Timing.h UserButtonCell.h Utils.h
 
 OTHERLINKED = slice.pswraps
 
 MFILES = NSBench_main.m
 
-BUNDLES = SysInfo.bproj NXFactor.bproj
+BUNDLES = SysInfo.bproj NXFactor.bproj CoreMark.bproj
 
 OTHERSRCS = Makefile.preamble Makefile Makefile.postamble
 
@@ -50,7 +49,7 @@ SOURCEMODE = 444
 
 ICONSECTIONS =	-sectcreate __ICON app NSBench.tiff
 
-LIBS = -lMedia_s -lNeXT_s
+LIBS = -lNeXT_s
 DEBUG_LIBS = $(LIBS)
 PROF_LIBS = $(LIBS)
 

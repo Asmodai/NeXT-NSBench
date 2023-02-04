@@ -1,0 +1,22 @@
+LANGUAGE = English;
+FILESTABLE = {
+    C_FILES = (core_list_join.c, core_main.c, core_matrix.c, core_state.c, core_util.c);
+    CLASSES = (BundlePrimary.m, core_portme.m, Runner.m);
+    OTHER_RESOURCES = ();
+    OTHER_SOURCES = (Makefile.preamble, Makefile, Makefile.postamble);
+    INTERFACES = (CoreMark.nib);
+    H_FILES = (BundlePrimary.h, coremark.h, core_portme.h, result.h, Runner.h, stdint.h);
+    IMAGES = (NSBModule.tiff);
+    STRINGS_FILES = (NSBModule.strings);
+    OTHER_LINKED = ();
+};
+LOCALIZABLE_FILES = {
+    NSBModule.strings;
+    CoreMark.nib;
+};
+PROJECTVERSION = 1.1;
+PROJECTTYPE = Bundle;
+PROJECTNAME = CoreMark;
+GENERATEMAIN = YES;
+DOCICONFILES = ();
+BUNDLE_EXTENSION = bundle;

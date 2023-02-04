@@ -42,6 +42,9 @@
 {
   const char *moduleName;
   const char *moduleDescription;
+  const char *moduleVersion;
+  const char *moduleAuthor;
+  const char *moduleCopyright;
   const char *moduleImage;
   NSBModule  *module;
   BOOL        loadFirst;
@@ -52,6 +55,9 @@
 
 - (const char *)moduleName;
 - (const char *)moduleDescription;
+- (const char *)moduleAuthor;
+- (const char *)moduleVersion;
+- (const char *)moduleCopyright;
 - (const char *)moduleImage;
 - (NSBModule *)module;
 

@@ -1,12 +1,13 @@
 /* -*- ObjC -*-
- * NXFactor.m  --- Some title
+ * BundlePrimary.m --- Some title
  *
  * Copyright (c) 2023 Paul Ward <asmodai@gmail.com>
- * Copyright (c) 2001-2002 by Philippe C.D. Robert
+ *
+ * Time-stamp: <23/02/04 00:04:51 asmodai>
  *
  * Author:     Paul Ward <asmodai@gmail.com>
  * Maintainer: Paul Ward <asmodai@gmail.com>
- * Created:    Fri, 27 Jan 2023 04:22:02 +0000 (GMT)
+ * Created:    Fri,  3 Feb 2023 14:51:16 +0000 (GMT)
  */
 
 /* {{{ License: */
@@ -33,50 +34,27 @@
 /* }}} */
 
 #import "BundlePrimary.h"
-#import "NXBenchView.h"
 
-@implementation NXFactor
+#import "../Mach.h"
+
+Mach *mach_instance = nil;
+
+@implementation CoreMark
 
 - didLoadNib
 {
+  if (mach_instance == nil) {
+    mach_instance = mach;
+  }
+
   return self;
 }
 
-- showLog:sender
+- (BOOL)loadFirst
 {
-  [wndLog makeKeyAndOrderFront:self];
-
-  return self;
+  return NO;
 }
 
-- clear:sender
-{
-  [vvwFactor clear];
+@end /* CoreMark */
 
-  return self;
-}
-
-- run:sender
-{
-  NXRunAlertPanel("`NXFactor' Benchmark",
-                  "To get reliable results with this benchmark, "
-                  "please quit all other applications and ensure "
-                  "that NSBench is on top -- Command double-click "
-                  "NSBench's miniwindow.",
-                  "OK",
-                  NULL,
-                  NULL);
-
-  [vvwFactor setTestWindow:wndTest];
-  [wndTest setOneShot:YES];
-
-  [vvwFactor setLogText:txtLog];
-
-  [vvwFactor runBenchmark];
-
-  return self;
-}
-
-@end /* NXFactor */
-
-/* NXFactor.m ends here. */
+/* BundlePrimary.m ends here. */
